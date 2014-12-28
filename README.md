@@ -5,6 +5,13 @@
 Graphite & Statsd can be complex to setup.
 This image will have you running & collecting stats in just a few minutes.
 
+## Differences from original image hopsoft/docker-graphite-statsd
+
+* no ngnix/django/carbon log
+* no carbon stats
+* change storage schéma Default : 60s:30d, + 10sec, 1min, 10 min, 1 day
+* storage aggregation optimised to match statsd gauge
+ 
 ## Quick Start
 
 ```sh
@@ -13,7 +20,7 @@ sudo docker run -d \
   -p 80:80 \
   -p 2003:2003 \
   -p 8125:8125/udp \
-  hopsoft/graphite-statsd
+  clodio/docker-graphite-statsd
 ```
 
 This starts a Docker container named: **graphite**
@@ -129,7 +136,7 @@ you should consider mounting `/opt/graphite` & `/var/log` on a larger volume.
       -p 80:80 \
       -p 2003:2003 \
       -p 8125:8125/udp \
-      hopsoft/graphite-statsd
+      clodio/docker-graphite-statsd
     ```
 
 ## Additional Reading
@@ -145,15 +152,15 @@ Build the image yourself.
 
 ### OSX
 
-1. `git clone https://github.com/hopsoft/docker-graphite-statsd.git`
+1. `git clone https://github.com/clodio/docker-graphite-statsd.git`
 1. `cd docker-graphite-statsd`
 1. `vagrant up`
 1. `vagrant ssh`
-1. `sudo docker build -t hopsoft/graphite-statsd /vagrant`
+1. `sudo docker build -t clodio/docker-graphite-statsd /vagrant`
 
-**Note**: Pay attention to the forwarded ports in the [Vagrantfile](https://github.com/hopsoft/docker-graphite-statsd/blob/master/Vagrantfile).
+**Note**: Pay attention to the forwarded ports in the [Vagrantfile](https://github.com/clodio/docker-graphite-statsd/blob/master/Vagrantfile).
 
 ### Linux
 
-1. `git clone https://github.com/hopsoft/docker-graphite-statsd.git`
-1. `sudo docker build -t hopsoft/graphite-statsd ./docker-graphite-statsd`
+1. `git clone https://github.com/clodio/docker-graphite-statsd.git`
+1. `sudo docker build -t clodio/docker-graphite-statsd ./docker-graphite-statsd`
