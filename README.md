@@ -11,6 +11,7 @@ This image will have you running & collecting stats in just a few minutes.
 * no carbon stats
 * change storage schéma Default : 60s:30d, + 10sec, 1min, 10 min, 1 day
 * storage aggregation optimised to match statsd gauge
+* graphite timezone to paris
  
 ## Quick Start
 
