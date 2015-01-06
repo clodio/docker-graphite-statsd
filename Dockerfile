@@ -2,6 +2,25 @@ FROM phusion/baseimage:0.9.15
 MAINTAINER Claude Seguret <claude.seguret@gmail.com>
 # from hopsoft/docker-graphite-statsd : MAINTAINER Nathan Hopkins <natehop@gmail.com>
 
+ENV GRAFANA_VERSION 1.9.1
+ENV GRAPHITE_VERSION 0.9.12
+
+# Environment variables for HTTP AUTH
+ENV HTTP_USER admin
+ENV HTTP_PASS **Random**
+
+ENV GRAPHITE_PROTO http
+ENV GRAPHITE_HOST **None**
+ENV GRAPHITE_PORT 80
+ENV GRAPHITE_USER **None**
+ENV GRAPHITE_PASS **None**
+
+ENV ELASTICSEARCH_PROTO http
+ENV ELASTICSEARCH_HOST **None**
+ENV ELASTICSEARCH_PORT 9200
+ENV ELASTICSEARCH_USER **None**
+ENV ELASTICSEARCH_PASS **None**
+
 #RUN echo deb http://archive.ubuntu.com/ubuntu $(lsb_release -cs) main universe > /etc/apt/sources.list.d/universe.list
 RUN apt-get -y update\
  && apt-get -y upgrade
@@ -20,7 +39,9 @@ RUN apt-get -y --force-yes install vim\
  libcairo2-dev\
  python-cairo\
  pkg-config\
- nodejs
+ nodejs\
+ pwgen
+
 
 # python dependencies
 RUN pip install django==1.3\
@@ -31,31 +52,50 @@ RUN pip install django==1.3\
  txAMQP==0.6.2
 
 # install graphite
-RUN git clone -b 0.9.12 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web
+RUN git clone --depth 1 -b 0.9.12 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web
 WORKDIR /usr/local/src/graphite-web
 RUN python ./setup.py install
 ADD scripts/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
 ADD conf/graphite/ /opt/graphite/conf/
 
 # install whisper
-RUN git clone -b 0.9.12 https://github.com/graphite-project/whisper.git /usr/local/src/whisper
+RUN git clone --depth 1 -b 0.9.12 https://github.com/graphite-project/whisper.git /usr/local/src/whisper
 WORKDIR /usr/local/src/whisper
 RUN python ./setup.py install
 
 # install carbon
-RUN git clone -b 0.9.12 https://github.com/graphite-project/carbon.git /usr/local/src/carbon
+RUN git clone --depth 1 -b 0.9.12 https://github.com/graphite-project/carbon.git /usr/local/src/carbon
 WORKDIR /usr/local/src/carbon
 RUN python ./setup.py install
 
 # install statsd
-RUN git clone -b v0.7.2 https://github.com/etsy/statsd.git /opt/statsd
+RUN git clone --depth 1 -b v0.7.2 https://github.com/etsy/statsd.git /opt/statsd
 ADD conf/statsd/config.js /opt/statsd/config.js
+
+# install grafana
+ADD http://grafanarel.s3.amazonaws.com/grafana-${GRAFANA_VERSION}.tar.gz /usr/local/src/grafana
+WORKDIR /var/www/grafana
+RUN mkdir /var/www/grafana && /var/www/grafana/public && \
+    tar xzvf /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz --directory /var/www/grafana/public --strip-components 1 # && \
+    #rm /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz
+
+ADD conf/grafana/config.js /var/www/grafana/public/config.js
+
+ADD /scripts/run.sh /usr/local/src/grafana/run.sh
+ADD /scripts/set_basic_auth.sh /usr/local/src/grafana/set_basic_auth.sh
+ADD /scripts/set_grafana.sh /usr/local/src/grafana/set_grafana.sh
+RUN chmod +x /usr/local/src/grafana/*.sh
+
+CMD ["/usr/local/src/grafana/run.sh"]
+
 
 # config nginx
 RUN rm /etc/nginx/sites-enabled/default
 ADD conf/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD conf/nginx/graphite.conf /etc/nginx/sites-available/graphite.conf
+ADD conf/nginx/grafana.conf /etc/nginx/sites-available/grafana.conf
 RUN ln -s /etc/nginx/sites-available/graphite.conf /etc/nginx/sites-enabled/graphite.conf
+RUN ln -s /etc/nginx/sites-available/grafana.conf /etc/nginx/sites-enabled/grafana.conf
 
 # init django admin
 ADD scripts/django_admin_init.exp /usr/local/bin/django_admin_init.exp
@@ -77,7 +117,7 @@ RUN apt-get clean\
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # defaults
-EXPOSE 80:80 2003:2003 8125:8125/udp
-VOLUME ["/opt/graphite", "/etc/nginx", "/opt/statsd", "/etc/logrotate.d", "/var/log"]
+EXPOSE 80:80 2003:2003 8125:8125/udp 8084:8084
+VOLUME ["/opt/graphite", "/etc/nginx", "/opt/statsd", "/etc/logrotate.d", "/var/log", , "/var/www"]
 ENV HOME /root
 CMD ["/sbin/my_init"]
