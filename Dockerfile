@@ -45,7 +45,7 @@ ENV ELASTICSEARCH_PASS **None**
 
 # install grafana
 RUN mkdir -p /usr/local/src/grafana
-ADD http://grafanarel.s3.amazonaws.com/grafana-1.9.1.tar.gz /usr/local/src/grafana
+ADD http://grafanarel.s3.amazonaws.com/grafana-1.9.1.tar.gz /usr/local/src/grafana/grafana-1.9.1.tar.gz
 RUN mkdir -p /var/www/grafana/public
 WORKDIR /var/www/grafana
 RUN ls /usr/local/src/grafana
