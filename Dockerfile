@@ -43,24 +43,7 @@ ENV ELASTICSEARCH_PASS **None**
 # pwgen
 
 
-# install grafana
-RUN mkdir -p /usr/local/src/grafana
-ADD http://grafanarel.s3.amazonaws.com/grafana-1.9.1.tar.gz /usr/local/src/grafana/grafana-1.9.1.tar.gz
-RUN mkdir -p /var/www/grafana/public
-WORKDIR /var/www/grafana
-RUN ls /usr/local/src/grafana
-RUN tar xzvf /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz --directory /var/www/grafana/public --strip-components 1 
 
-# && \    #rm /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz
-
-ADD conf/grafana/config.js /var/www/grafana/public/config.js
-
-ADD scripts/run.sh /usr/local/src/grafana/run.sh
-ADD scripts/set_basic_auth.sh /usr/local/src/grafana/set_basic_auth.sh
-ADD scripts/set_grafana.sh /usr/local/src/grafana/set_grafana.sh
-RUN chmod +x /usr/local/src/grafana/*.sh
-
-CMD ["/usr/local/src/grafana/run.sh"]
 
 
 # python dependencies
@@ -92,7 +75,24 @@ RUN python ./setup.py install
 RUN git clone -b v0.7.2 https://github.com/etsy/statsd.git /opt/statsd
 ADD conf/statsd/config.js /opt/statsd/config.js
 
+# install grafana
+RUN mkdir -p /usr/local/src/grafana
+ADD http://grafanarel.s3.amazonaws.com/grafana-${GRAFANA_VERSION}.tar.gz /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz
+RUN mkdir -p /var/www/grafana/public
+WORKDIR /var/www/grafana
+RUN ls /usr/local/src/grafana
+RUN tar xzvf /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz --directory /var/www/grafana/public --strip-components 1 
 
+# && \    #rm /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz
+
+ADD conf/grafana/config.js /var/www/grafana/public/config.js
+
+ADD scripts/run.sh /usr/local/src/grafana/run.sh
+ADD scripts/set_basic_auth.sh /usr/local/src/grafana/set_basic_auth.sh
+ADD scripts/set_grafana.sh /usr/local/src/grafana/set_grafana.sh
+RUN chmod +x /usr/local/src/grafana/*.sh
+
+CMD ["/usr/local/src/grafana/run.sh"]
 
 # config nginx
 RUN rm /etc/nginx/sites-enabled/default
