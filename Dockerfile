@@ -74,10 +74,11 @@ ADD conf/statsd/config.js /opt/statsd/config.js
 
 # install grafana
 ADD http://grafanarel.s3.amazonaws.com/grafana-${GRAFANA_VERSION}.tar.gz /usr/local/src/grafana
+RUN mkdir -p /var/www/grafana/public
 WORKDIR /var/www/grafana
-RUN mkdir /var/www/grafana/public && \
-    tar xzvf /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz --directory /var/www/grafana/public --strip-components 1 # && \
-    #rm /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz
+RUN tar xzvf /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz --directory /var/www/grafana/public --strip-components 1 
+
+# && \    #rm /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz
 
 ADD conf/grafana/config.js /var/www/grafana/public/config.js
 
