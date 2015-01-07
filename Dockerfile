@@ -43,6 +43,26 @@ RUN apt-get -y --force-yes install vim\
  pwgen
 
 
+# install grafana
+RUN mkdir -p /usr/local/src/grafana
+ADD http://grafanarel.s3.amazonaws.com/grafana-${GRAFANA_VERSION}.tar.gz /usr/local/src/grafana
+RUN mkdir -p /var/www/grafana/public
+WORKDIR /var/www/grafana
+RUN ls /usr/local/src/grafana
+RUN tar xzvf /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz --directory /var/www/grafana/public --strip-components 1 
+
+# && \    #rm /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz
+
+ADD conf/grafana/config.js /var/www/grafana/public/config.js
+
+ADD scripts/run.sh /usr/local/src/grafana/run.sh
+ADD scripts/set_basic_auth.sh /usr/local/src/grafana/set_basic_auth.sh
+ADD scripts/set_grafana.sh /usr/local/src/grafana/set_grafana.sh
+RUN chmod +x /usr/local/src/grafana/*.sh
+
+CMD ["/usr/local/src/grafana/run.sh"]
+
+
 # python dependencies
 RUN pip install django==1.3\
  python-memcached==1.53\
@@ -72,22 +92,6 @@ RUN python ./setup.py install
 RUN git clone -b v0.7.2 https://github.com/etsy/statsd.git /opt/statsd
 ADD conf/statsd/config.js /opt/statsd/config.js
 
-# install grafana
-ADD http://grafanarel.s3.amazonaws.com/grafana-${GRAFANA_VERSION}.tar.gz /usr/local/src/grafana
-RUN mkdir -p /var/www/grafana/public
-WORKDIR /var/www/grafana
-RUN tar xzvf /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz --directory /var/www/grafana/public --strip-components 1 
-
-# && \    #rm /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz
-
-ADD conf/grafana/config.js /var/www/grafana/public/config.js
-
-ADD scripts/run.sh /usr/local/src/grafana/run.sh
-ADD scripts/set_basic_auth.sh /usr/local/src/grafana/set_basic_auth.sh
-ADD scripts/set_grafana.sh /usr/local/src/grafana/set_grafana.sh
-RUN chmod +x /usr/local/src/grafana/*.sh
-
-CMD ["/usr/local/src/grafana/run.sh"]
 
 
 # config nginx
@@ -118,6 +122,7 @@ RUN apt-get clean\
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # defaults
+# do not expose puplic port : http://crosbymichael.com/dockerfile-best-practices.html
 EXPOSE 80:80 2003:2003 8125:8125/udp 8084:8084
 VOLUME ["/opt/graphite", "/etc/nginx", "/opt/statsd", "/etc/logrotate.d", "/var/log", , "/var/www"]
 ENV HOME /root
