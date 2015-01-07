@@ -22,30 +22,30 @@ ENV ELASTICSEARCH_USER **None**
 ENV ELASTICSEARCH_PASS **None**
 
 #RUN echo deb http://archive.ubuntu.com/ubuntu $(lsb_release -cs) main universe > /etc/apt/sources.list.d/universe.list
-RUN apt-get -y update\
- && apt-get -y upgrade
+#RUN apt-get -y update\
+# && apt-get -y upgrade
 
 # dependencies
-RUN apt-get -y --force-yes install vim\
- nginx\
- python-dev\
- python-flup\
- python-pip\
- expect\
- git\
- memcached\
- sqlite3\
- libcairo2\
- libcairo2-dev\
- python-cairo\
- pkg-config\
- nodejs\
- pwgen
+#RUN apt-get -y --force-yes install vim\
+# nginx\
+# python-dev\
+# python-flup\
+# python-pip\
+# expect\
+# git\
+# memcached\
+# sqlite3\
+# libcairo2\
+# libcairo2-dev\
+# python-cairo\
+# pkg-config\
+# nodejs\
+# pwgen
 
 
 # install grafana
 RUN mkdir -p /usr/local/src/grafana
-ADD http://grafanarel.s3.amazonaws.com/grafana-${GRAFANA_VERSION}.tar.gz /usr/local/src/grafana
+ADD http://grafanarel.s3.amazonaws.com/grafana-1.9.1.tar.gz /usr/local/src/grafana
 RUN mkdir -p /var/www/grafana/public
 WORKDIR /var/www/grafana
 RUN ls /usr/local/src/grafana
