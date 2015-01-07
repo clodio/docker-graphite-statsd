@@ -21,30 +21,26 @@ ENV ELASTICSEARCH_PORT 9200
 ENV ELASTICSEARCH_USER **None**
 ENV ELASTICSEARCH_PASS **None**
 
-#RUN echo deb http://archive.ubuntu.com/ubuntu $(lsb_release -cs) main universe > /etc/apt/sources.list.d/universe.list
-#RUN apt-get -y update\
-# && apt-get -y upgrade
+RUN echo deb http://archive.ubuntu.com/ubuntu $(lsb_release -cs) main universe > /etc/apt/sources.list.d/universe.list
+RUN apt-get -y update\
+ && apt-get -y upgrade
 
 # dependencies
-#RUN apt-get -y --force-yes install vim\
-# nginx\
-# python-dev\
-# python-flup\
-# python-pip\
-# expect\
-# git\
-# memcached\
-# sqlite3\
-# libcairo2\
-# libcairo2-dev\
-# python-cairo\
-# pkg-config\
-# nodejs\
-# pwgen
-
-
-
-
+RUN apt-get -y --force-yes install vim\
+ nginx\
+ python-dev\
+ python-flup\
+ python-pip\
+ expect\
+ git\
+ memcached\
+ sqlite3\
+ libcairo2\
+ libcairo2-dev\
+ python-cairo\
+ pkg-config\
+ nodejs\
+ pwgen
 
 # python dependencies
 RUN pip install django==1.3\
@@ -122,7 +118,7 @@ RUN apt-get clean\
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # defaults
-# do not expose puplic port : http://crosbymichael.com/dockerfile-best-practices.html
+# do not expose public port : http://crosbymichael.com/dockerfile-best-practices.html
 EXPOSE 80:80 2003:2003 8125:8125/udp 8084:8084
 VOLUME ["/opt/graphite", "/etc/nginx", "/opt/statsd", "/etc/logrotate.d", "/var/log", , "/var/www"]
 ENV HOME /root
