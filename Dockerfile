@@ -2,7 +2,6 @@ FROM phusion/baseimage:0.9.15
 MAINTAINER Claude Seguret <claude.seguret@gmail.com>
 # from hopsoft/docker-graphite-statsd : MAINTAINER Nathan Hopkins <natehop@gmail.com>
 
-ENV GRAFANA_VERSION 1.9.1
 ENV GRAPHITE_VERSION 0.9.12
 
 # Environment variables for HTTP AUTH
@@ -71,32 +70,11 @@ RUN python ./setup.py install
 RUN git clone -b v0.7.2 https://github.com/etsy/statsd.git /opt/statsd
 ADD conf/statsd/config.js /opt/statsd/config.js
 
-# install grafana
-RUN mkdir -p /usr/local/src/grafana
-ADD http://grafanarel.s3.amazonaws.com/grafana-${GRAFANA_VERSION}.tar.gz /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz
-RUN mkdir -p /var/www/grafana/public
-WORKDIR /var/www/grafana
-RUN ls /usr/local/src/grafana
-RUN tar xzvf /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz --directory /var/www/grafana/public --strip-components 1 
-
-# && \    #rm /usr/local/src/grafana/grafana-${GRAFANA_VERSION}.tar.gz
-
-ADD conf/grafana/config.js /var/www/grafana/public/config.js
-
-ADD scripts/run.sh /usr/local/src/grafana/run.sh
-ADD scripts/set_basic_auth.sh /usr/local/src/grafana/set_basic_auth.sh
-ADD scripts/set_grafana.sh /usr/local/src/grafana/set_grafana.sh
-RUN chmod +x /usr/local/src/grafana/*.sh
-
-CMD ["/usr/local/src/grafana/run.sh"]
-
 # config nginx
 RUN rm /etc/nginx/sites-enabled/default
 ADD conf/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD conf/nginx/graphite.conf /etc/nginx/sites-available/graphite.conf
-ADD conf/nginx/grafana.conf /etc/nginx/sites-available/grafana.conf
 RUN ln -s /etc/nginx/sites-available/graphite.conf /etc/nginx/sites-enabled/graphite.conf
-RUN ln -s /etc/nginx/sites-available/grafana.conf /etc/nginx/sites-enabled/grafana.conf
 
 # init django admin
 ADD scripts/django_admin_init.exp /usr/local/bin/django_admin_init.exp

@@ -31,13 +31,5 @@ if [ "${HTTP_PASS}" == "**Random**" ]; then
     unset HTTP_PASS
 fi
 
-if [ ! -f /.basic_auth_configured ]; then
-    /set_basic_auth.sh
-fi
-
-if [ ! -f /.grafana_configured ]; then
-    /set_grafana.sh
-fi
-
 echo "=> Starting and running Nginx..."
 /usr/sbin/nginx
