@@ -45,7 +45,7 @@ RUN apt-get -y --force-yes install vim\
 RUN pip install django==1.4\
  python-memcached==1.57\
  django-tagging==0.3.1\
- whisper==0.9.14\
+ whisper==0.9.12\
  twisted==11.1.0\
  txAMQP==0.6.2
 
