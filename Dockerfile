@@ -1,4 +1,4 @@
-FROM phusion/baseimage:0.9.15
+FROM phusion/baseimage:0.9.17
 MAINTAINER Claude Seguret <claude.seguret@gmail.com>
 # from hopsoft/docker-graphite-statsd : MAINTAINER Nathan Hopkins <natehop@gmail.com>
 
