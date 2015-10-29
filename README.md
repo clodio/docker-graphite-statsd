@@ -147,21 +147,3 @@ you should consider mounting `/opt/graphite` & `/var/log` on a larger volume.
 * [Practical Guide to StatsD/Graphite Monitoring](http://matt.aimonetti.net/posts/2013/06/26/practical-guide-to-graphite-monitoring/)
 * [Configuring Graphite for StatsD](https://github.com/etsy/statsd/blob/master/docs/graphite.md)
 
-## Contributors
-
-Build the image yourself.
-
-### OSX
-
-1. `git clone https://github.com/clodio/docker-graphite-statsd.git`
-1. `cd docker-graphite-statsd`
-1. `vagrant up`
-1. `vagrant ssh`
-1. `sudo docker build -t clodio/docker-graphite-statsd /vagrant`
-
-**Note**: Pay attention to the forwarded ports in the [Vagrantfile](https://github.com/clodio/docker-graphite-statsd/blob/master/Vagrantfile).
-
-### Linux
-
-1. `git clone https://github.com/clodio/docker-graphite-statsd.git`
-1. `sudo docker build -t clodio/docker-graphite-statsd ./docker-graphite-statsd`
