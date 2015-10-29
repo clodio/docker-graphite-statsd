@@ -2,7 +2,7 @@ FROM phusion/baseimage:0.9.17
 MAINTAINER Claude Seguret <claude.seguret@gmail.com>
 # from hopsoft/docker-graphite-statsd : MAINTAINER Nathan Hopkins <natehop@gmail.com>
 
-ENV GRAPHITE_VERSION 0.9.14
+ENV GRAPHITE_VERSION 0.9.12
 
 # Environment variables for HTTP AUTH
 ENV HTTP_USER admin
@@ -50,19 +50,19 @@ RUN pip install django==1.4\
  txAMQP==0.6.2
 
 # install graphite
-RUN git clone -b 0.9.14 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web
+RUN git clone -b 0.9.12 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web
 WORKDIR /usr/local/src/graphite-web
 RUN python ./setup.py install
 ADD scripts/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
 ADD conf/graphite/ /opt/graphite/conf/
 
 # install whisper
-RUN git clone -b 0.9.14 https://github.com/graphite-project/whisper.git /usr/local/src/whisper
+RUN git clone -b 0.9.12 https://github.com/graphite-project/whisper.git /usr/local/src/whisper
 WORKDIR /usr/local/src/whisper
 RUN python ./setup.py install
 
 # install carbon
-RUN git clone -b 0.9.14 https://github.com/graphite-project/carbon.git /usr/local/src/carbon
+RUN git clone -b 0.9.12 https://github.com/graphite-project/carbon.git /usr/local/src/carbon
 WORKDIR /usr/local/src/carbon
 RUN python ./setup.py install
 
