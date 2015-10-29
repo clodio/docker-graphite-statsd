@@ -42,8 +42,8 @@ RUN apt-get -y --force-yes install vim\
  pwgen
 
 # python dependencies
-RUN pip install django==1.4\
- python-memcached==1.57\
+RUN pip install django==1.3\
+ python-memcached==1.53\
  django-tagging==0.3.1\
  whisper==0.9.12\
  twisted==11.1.0\
